@@ -49,11 +49,11 @@
 <!--            <version>3.141.59</version>-->
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.jaliansystems/marathon-java-driver -->
-<!--        <dependency>-->
-<!--            <groupId>com.jaliansystems</groupId>-->
-<!--            <artifactId>marathon-java-driver</artifactId>-->
-<!--            <version>5.2.5.0</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.jaliansystems</groupId>
+            <artifactId>marathon-java-driver</artifactId>
+            <version>5.2.5.0</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/junit/junit -->
     </dependencies>

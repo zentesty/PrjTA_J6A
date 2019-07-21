@@ -29,10 +29,9 @@ public class SwingDemo {
         System.out.println("ZEN: Initializing the Swing Frame loaded with the SwingInsector");
 
         //Creating the Frame
-        final JFrame frame = new JFrame("Chat Frame");
+        final JFrame frame = new JFrame("MP Test APP");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
-
+        frame.setSize(800, 600);
 
 
         //Creating the MenuBar and adding components
@@ -58,6 +57,8 @@ public class SwingDemo {
         panel.add(send);
         panel.add(reset);
 
+
+        // 1 ier
         JPanel panelTest = new JPanel();
         JLabel jLabel1 = new JLabel("test1");
         JLabel jLabel2 = new JLabel("test2");
@@ -72,12 +73,41 @@ public class SwingDemo {
         panelTestIn.add("INMPPANEL1", jLabelIn1);
         panelTestIn.add("INMPPANEL2", jLabelIn2);
 
+
+        JPanel panelTestB = new JPanel();
+        JLabel jLabel1B = new JLabel("test1B");
+        JLabel jLabel2B = new JLabel("test2B");
+        JLabel jLabel3B = new JLabel("test3B");
+        panelTestB.add(jLabel1B);
+        panelTestB.add(jLabel2B);
+        panelTestB.add(jLabel3B);
+
         panelTest.add(panelTestIn);
+
+
+
+        // 2 ieme
+
+        JPanel panelTestInB = new JPanel();
+        JLabel jLabelIn1B = new JLabel("Intest1B");
+        JLabel jLabelIn2B = new JLabel("Intest2B");
+        panelTestInB.add(jLabelIn1B);
+        panelTestInB.add(jLabelIn2B);
+
+
+        panelTestB.add(panelTestInB);
+
+        // Add to main
+        JPanel panelMain = new JPanel();
+        panelMain.add(panelTest);
+        panelMain.add(panelTestB);
 
         panelTest.setName("ZenPanel01");
         panelTestIn.setName("ZenPanel02");
+        panelMain.setName("ZenCentral");
+        panel.setName("ZenTOP_PANEL");
 
-        panel.setName("ZenPanelMain");
+  
 
         send.addActionListener(new ActionListener() {
             @Override
@@ -116,7 +146,7 @@ public class SwingDemo {
         frame.getContentPane().add(BorderLayout.NORTH, mb);
 //        frame.getContentPane().add(BorderLayout.CENTER, ta);
 //        frame.getContentPane().add(BorderLayout.CENTER, jpane);
-        frame.getContentPane().add(BorderLayout.CENTER, panelTest);
+        frame.getContentPane().add(BorderLayout.CENTER, panelMain);
 
         frame.setVisible(true);
     }
@@ -135,8 +165,6 @@ public class SwingDemo {
 
         return treeView;
     }
-
-
 
 
     private void createNodes(DefaultMutableTreeNode top) {

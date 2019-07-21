@@ -1,12 +1,14 @@
 package swingtest;
 
 import core.Log4RQ;
-//import net.sourceforge.marathon.javadriver.JavaDriver;
-//import net.sourceforge.marathon.javadriver.JavaProfile;
+import net.sourceforge.marathon.javaagent.JavaElement;
+import net.sourceforge.marathon.javadriver.JavaDriver;
+import net.sourceforge.marathon.javadriver.JavaProfile;
 import org.apache.commons.exec.OS;
 import org.openqa.selenium.*;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.RemoteWebElement;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -16,6 +18,8 @@ import java.util.List;
 
 public class NewSwingTest {
     private RemoteWebDriver driver;
+    private JavaDriver jDriver;
+
 
     private String getText(WebElement wElem){
         String szRet = null;
@@ -130,7 +134,7 @@ public class NewSwingTest {
         String name = this.getAttribute(elem, "name");
         String id = this.getAttribute(elem, "id");
         String szType = this.getAttribute(elem, "type");
-        String tag2 = this.getAttribute(elem, "parent");
+        String parent = this.getAttribute(elem, "parent");
         String childs = this.getCssValue(elem, "childs");
         String CText = this.getCssValue(elem, "CText");
         String accessibleName = this.getCssValue(elem, "accessibleName");
@@ -147,7 +151,8 @@ public class NewSwingTest {
                         "   ~ CText: " + CText +
                         "   ~ accessibleName: " + accessibleName +
                         "   ~ fieldName: " + fieldName +
-                        "   ~ ctxAccessibleName: " + ctxAccessibleName);
+                        "   ~ ctxAccessibleName: " + ctxAccessibleName +
+                        "   ~ parent: " + parent);
 
     }
 
@@ -165,6 +170,18 @@ public class NewSwingTest {
     }
 
 
+    private WebElement getParent(WebElement wElem){
+        WebElement weRet = null;
+        try{
+            weRet = (WebElement) driver.executeScript("return $1.getParent();",wElem);
+
+        } catch(Exception e){
+              Log4RQ.logDebug("Failed to access the parent object");
+        }
+
+        return weRet;
+    }
+
     public static void main(String[] args) {
 
         String szURL = "127.0.0.1:44444";
@@ -175,8 +192,7 @@ public class NewSwingTest {
 
         NewSwingTest app = new NewSwingTest();
 
-        app.createDriverJava();
-
+//        app.createDriverJava();
 
         try {
             app.javaDriverDemo(szURL);
@@ -198,21 +214,36 @@ public class NewSwingTest {
 //        List<WebElement> listret = driver.findElements(By.cssSelector("*"));
         //this.printOutChildsInfo(listret);
 
+        JavascriptExecutor js;
+        Object ret = null;
 
         WebElement myPanel = driver.findElement(By.id("ZenPanel01"));
+        WebElement weParent = this.getParent(myPanel);
+        String sRet = weParent.getAttribute("name");
+        this.printWebElementInfo(weParent);
+
+        myPanel = driver.findElement(By.id("ZenPanel01"));
         List<WebElement> lElem = myPanel.findElements(By.cssSelector("."));
-        this.printOutChildsInfo(lElem);
+//        this.printOutChildsInfo(lElem);
 
         String sz = "";
         sz = myPanel.getAttribute("parent");
-        sz = myPanel.getAttribute("type");
-        sz = myPanel.getAttribute("name");
-        sz = myPanel.getAttribute("id");
+
 
 
         // Second elem
         myPanel = driver.findElement(By.id("ZenPanel02"));
         sz = myPanel.getAttribute("parent");
+
+
+        List<WebElement> listAll = driver.findElements(By.cssSelector("*"));
+        this.printOutChildsInfo(listAll);
+
+
+        jDriver = (JavaDriver) driver;
+        WebElement jElems = jDriver.findElementByCssSelector("*");
+
+
 
         int i = 100;
 
@@ -221,12 +252,12 @@ public class NewSwingTest {
 
     // Java 1.8 only
     public void createDriverJava() {
-//        JavaProfile profile = new JavaProfile(JavaProfile.LaunchMode.COMMAND_LINE);
-//        File f = new File("/home/mroy/myrun.sh");
-//        profile.setCommand(f.getAbsolutePath());
-//        profile.addApplicationArguments("Argument1");
-//        DesiredCapabilities caps = new DesiredCapabilities("java", "1.5", Platform.ANY);
-//        driver = new JavaDriver(profile, caps, caps);
+        JavaProfile profile = new JavaProfile(JavaProfile.LaunchMode.COMMAND_LINE);
+        File f = new File("/home/mroy/myrun.sh");
+        profile.setCommand(f.getAbsolutePath());
+        profile.addApplicationArguments("Argument1");
+        DesiredCapabilities caps = new DesiredCapabilities("java", "1.5", Platform.ANY);
+        driver = new JavaDriver(profile, caps, caps);
     }
 
 
