@@ -10,6 +10,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.RemoteWebElement;
 
+import javax.swing.border.Border;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -254,6 +255,8 @@ public class NewSwingTest {
 
         WebElement rootPane = (WebElement) driver.executeScript("return $1.getRootPane()", myPanel);
         sRet = rootPane.getAttribute("name");
+
+        Border border = (Border) driver.executeScript("return $1.getBorder()", myPanel);
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
 //        js.executeScript("return $1.setBackground(Color.YELLOW)", rootPane);
