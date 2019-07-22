@@ -170,7 +170,7 @@ public class NewSwingTest {
     }
 
 
-    private WebElement getParent(WebElement wElem){
+    private WebElement findParent(WebElement wElem){
         WebElement weRet = null;
         try{
             weRet = (WebElement) driver.executeScript("return $1.getParent();",wElem);
@@ -181,6 +181,20 @@ public class NewSwingTest {
 
         return weRet;
     }
+
+
+    private List<WebElement> findChild(WebElement wElem){
+        List<WebElement> weRet = null;
+        try{
+            weRet = (List<WebElement>) driver.executeScript("return $1.getComponents()", wElem);
+
+        } catch(Exception e){
+            Log4RQ.logDebug("Failed to access the parent object");
+        }
+
+        return weRet;
+    }
+
 
     public static void main(String[] args) {
 
@@ -211,16 +225,39 @@ public class NewSwingTest {
         String title = driver.getTitle();
         log("Found title is " + title);
 
+
+//        WebElement wTop =  driver.findElement(By.name("ZenCentral"));
+        WebElement wTop =  driver.findElement(By.cssSelector("."));
+        String szTop = wTop.getAttribute("name");
+
+        MyTree tree = new MyTree(null, wTop);
+
+        List<WebElement> lElem001 = this.findChild(wTop);
+
 //        List<WebElement> listret = driver.findElements(By.cssSelector("*"));
         //this.printOutChildsInfo(listret);
 
-        JavascriptExecutor js;
         Object ret = null;
 
         WebElement myPanel = driver.findElement(By.id("ZenPanel01"));
-        WebElement weParent = this.getParent(myPanel);
+        WebElement weParent = this.findParent(myPanel);
         String sRet = weParent.getAttribute("name");
         this.printWebElementInfo(weParent);
+        List<WebElement> listElem = this.findChild(myPanel);
+
+//
+//
+//          TEST TEST TEST TEST
+//
+//
+
+
+        WebElement rootPane = (WebElement) driver.executeScript("return $1.getRootPane()", myPanel);
+        sRet = rootPane.getAttribute("name");
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+//        js.executeScript("return $1.setBackground(Color.YELLOW)", rootPane);
+
 
         myPanel = driver.findElement(By.id("ZenPanel01"));
         List<WebElement> lElem = myPanel.findElements(By.cssSelector("."));
@@ -260,6 +297,52 @@ public class NewSwingTest {
         driver = new JavaDriver(profile, caps, caps);
     }
 
+    public class MyTree {
 
+        private MyTree parent = null;
+        private List<MyTree> childs = new ArrayList<MyTree>();
+        private WebElement weSelf = null;
+        private String name = null;
+        private String type = null;
+        private String info = null;
+
+        public MyTree(MyTree parent, WebElement selfWE){
+            this.parent = parent;
+            this.weSelf = selfWE;
+            this.name = selfWE.getAttribute("name");
+            this.type = selfWE.getAttribute("type");
+            this.info = selfWE.getAttribute("CText");
+            createTree();
+        }
+
+        public int createTree(){
+
+            List<WebElement> lElems = this.findChild(this.weSelf);
+
+            for(WebElement elem : lElems){
+                MyTree myTreeChild = new MyTree(this, elem);
+                this.childs.add(myTreeChild);
+            }
+            return 0;
+        }
+
+        private List<WebElement> findChild(WebElement wElem){
+            List<WebElement> weRet = null;
+            try{
+                weRet = (List<WebElement>) driver.executeScript("return $1.getComponents()", wElem);
+
+            } catch(Exception e){
+                Log4RQ.logDebug("Failed to access the parent object");
+            }
+
+            return weRet;
+        }
+
+        @Override
+        public String toString() {
+            return "MyTree < " + this.name + " >  type [ " + this.type + " ]  " +
+                    "text = " + this.info + "  childs = " + this.childs.size();
+        }
+    }
 
 }

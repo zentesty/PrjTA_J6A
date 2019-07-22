@@ -107,7 +107,6 @@ public class SwingDemo {
         panelMain.setName("ZenCentral");
         panel.setName("ZenTOP_PANEL");
 
-  
 
         send.addActionListener(new ActionListener() {
             @Override
