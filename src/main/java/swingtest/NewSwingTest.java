@@ -197,6 +197,28 @@ public class NewSwingTest {
     }
 
 
+    private List<WebElement> findChildEx(WebElement wElem){
+        List<WebElement> weRet = new ArrayList<WebElement>();
+        try{
+            String szRet = wElem.getAttribute("components");
+            String[] lString = szRet.split("@");
+            for(int i =0; i < lString.length; i++){
+                if(lString[i].contains("id=")){
+                    String szId = lString[i].split("id=")[1];
+                    szId = szId.replace(",", "");
+                    szId= szId.trim();
+                    weRet.add(driver.findElement(By.cssSelector("*[id*='" + szId + "']")));
+
+                }
+            }
+
+        } catch(Exception e){
+            Log4RQ.logDebug(e.getLocalizedMessage());
+        }
+
+        return weRet;
+    }
+
     public static void main(String[] args) {
 
         String szURL = "127.0.0.1:44444";
@@ -227,13 +249,34 @@ public class NewSwingTest {
         log("Found title is " + title);
 
 
+        List<WebElement> listTop =  driver.findElements(By.cssSelector("*"));
+
+
+
+
 //        WebElement wTop =  driver.findElement(By.name("ZenCentral"));
-        WebElement wTop =  driver.findElement(By.cssSelector("."));
-        String szTop = wTop.getAttribute("name");
+        WebElement wTop =  driver.findElement(By.cssSelector("*"));
+
+
+//
+//
+//        WebElement wElemParent =  driver.findElement(By.id("ZenCentral"));
+//        WebElement wElemChild =  driver.findElement(By.id("ZenPanel01"));
+//
+//        WebElement retParent = this.findParent(wElemChild);
+//
 
         MyTree tree = new MyTree(null, wTop);
 
+
+        WebElement elemParent = driver.findElement(By.cssSelector("*[type*='RunTab']"));
+        WebElement elemChild = driver.findElement(By.cssSelector("*[type*='G5RunPanel']"));
+
+
         List<WebElement> lElem001 = this.findChild(wTop);
+
+
+
 
 //        List<WebElement> listret = driver.findElements(By.cssSelector("*"));
         //this.printOutChildsInfo(listret);
@@ -256,7 +299,6 @@ public class NewSwingTest {
         WebElement rootPane = (WebElement) driver.executeScript("return $1.getRootPane()", myPanel);
         sRet = rootPane.getAttribute("name");
 
-        Border border = (Border) driver.executeScript("return $1.getBorder()", myPanel);
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
 //        js.executeScript("return $1.setBackground(Color.YELLOW)", rootPane);
@@ -315,11 +357,15 @@ public class NewSwingTest {
             this.name = selfWE.getAttribute("name");
             this.type = selfWE.getAttribute("type");
             this.info = selfWE.getAttribute("CText");
-            createTree();
+            try{
+                createTree();
+            } catch(Exception e){
+
+            }
+
         }
 
         public int createTree(){
-
             List<WebElement> lElems = this.findChild(this.weSelf);
 
             for(WebElement elem : lElems){
@@ -330,12 +376,25 @@ public class NewSwingTest {
         }
 
         private List<WebElement> findChild(WebElement wElem){
-            List<WebElement> weRet = null;
+            List<WebElement> weRet = new ArrayList<WebElement>();
             try{
-                weRet = (List<WebElement>) driver.executeScript("return $1.getComponents()", wElem);
+                String szRet = wElem.getAttribute("components");
+
+                if(!szRet.contains("id=") && !(szRet.compareTo("[]") == 0) ) {
+                    Log4RQ.logDebug("****** NO ID FOUND ****** " + szRet + "  -  " + this.type);
+                }
+                String[] lString = szRet.split("@");
+                for(int i =0; i < lString.length; i++){
+                    if(lString[i].contains("id=")){
+                        String szId = lString[i].split("id=")[1];
+                        szId = szId.substring(0, 35);
+                        weRet.add(driver.findElement(By.cssSelector("*[id*='" + szId + "']")));
+
+                    }
+                }
 
             } catch(Exception e){
-                Log4RQ.logDebug("Failed to access the parent object");
+                Log4RQ.logDebug(e.getLocalizedMessage());
             }
 
             return weRet;
